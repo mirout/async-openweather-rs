@@ -1,4 +1,4 @@
-enum Location {
+pub enum Location {
     CityName {
         name: String,
         state_code: Option<String>,
@@ -29,4 +29,6 @@ enum Location {
     },
 }
 
-impl Location {}
+impl Location {
+
+}

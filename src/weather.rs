@@ -38,7 +38,7 @@ pub struct Clouds {
 pub struct Sys {
     #[serde(rename="type")]
     sys_type: u32,
-    id: u32,
+    pub id: u32,
     message: f32,
     country: String,
     sunrise: u64,
@@ -55,8 +55,8 @@ pub struct WeatherCurrent {
     wind: Wind,
     clouds: Clouds,
     dt: u64,
-    sys: Sys,
+    pub sys: Sys,
     id: u32,
-    name: String,
+    pub name: String,
     cod: u32,
 }
