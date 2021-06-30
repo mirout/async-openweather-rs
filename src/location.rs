@@ -1,30 +1,30 @@
-pub enum Location<'a> {
+enum Location {
     CityName {
-        name: &'a str,
-        state_code: Option<&'a str>,
-        country_code: Option<&'a str>,
+        name: String,
+        state_code: Option<String>,
+        country_code: Option<String>,
     },
     CityId {
-        id: &'a str,
+        id: String,
     },
     Coordinates {
-        lat: f64,
-        lon: f64,
+        lat: f32,
+        lon: f32,
     },
     ZipCode {
-        zip_code: &'a str,
-        country_code: Option<&'a str>,
+        zip_code: String,
+        country_code: String,
     },
     BoundingBox {
-        lon_left: f64,
-        lat_bottom: f64,
-        lon_right: f64,
-        lat_top: f64,
-        zoom: f64,
+        lon_left: f32,
+        lat_bottom: f32,
+        lon_right: f32,
+        lat_top: f32,
+        zoom: f32,
     },
     Circle {
-        lat: f64,
-        lon: f64,
+        lat: f32,
+        lon: f32,
         count: u32,
     },
 }
