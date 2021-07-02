@@ -18,8 +18,8 @@ mod tests {
             state_code: None,
             country_code: Some("GB".to_string()),
         };
-        let result = client.get_current_weather(city).await;
-        assert_eq!(result.unwrap().name, "London")
+        let result = client.get_current_weather(city).await.unwrap();
+        assert_eq!(result.name, "London")
     }
 
     #[tokio::test]
@@ -28,8 +28,8 @@ mod tests {
         let city = Location::CityId {
             id: "498817".to_string(),
         };
-        let result = client.get_current_weather(city).await;
-        assert_eq!(result.unwrap().name, "Saint Petersburg")
+        let result = client.get_current_weather(city).await.unwrap();
+        assert_eq!(result.name, "Saint Petersburg")
     }
 
     #[tokio::test]
@@ -39,8 +39,8 @@ mod tests {
             lat: 55.751244,
             lon: 37.618423,
         };
-        let result = client.get_current_weather(city).await;
-        assert_eq!(result.unwrap().name, "Moscow")
+        let result = client.get_current_weather(city).await.unwrap();
+        assert_eq!(result.name, "Moscow")
     }
 
     #[tokio::test]
@@ -50,7 +50,7 @@ mod tests {
             zip_code: 10001,
             country_code: "US".to_string(),
         };
-        let result = client.get_current_weather(city).await;
-        assert_eq!(result.unwrap().name, "New York")
+        let result = client.get_current_weather(city).await.unwrap();
+        assert_eq!(result.name, "New York")
     }
 }
