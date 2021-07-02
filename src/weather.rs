@@ -56,7 +56,7 @@ pub struct WeatherCurrent {
     pub clouds: Clouds,
     pub dt: u64,
     pub sys: Sys,
-    pub timezone: u32,
+    pub timezone: i32,
     pub id: u64,
     pub name: String,
     pub cod: u32,
