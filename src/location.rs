@@ -12,7 +12,7 @@ pub enum Location {
         lon: f32,
     },
     ZipCode {
-        zip_code: String,
+        zip_code: u32,
         country_code: String,
     },
     BoundingBox {
@@ -35,8 +35,12 @@ impl Location {
             Location::CityName { name, state_code, country_code } => {
                 format!("q={}{}{}",
                         name,
-                        state_code.as_ref().map(|x| ",".to_string() + x).unwrap_or("".to_string()),
-                        country_code.as_ref().map(|x| ",".to_string() + x).unwrap_or(String::from("")))
+                        state_code.as_ref()
+                            .map(|x| ",".to_string() + x)
+                            .unwrap_or("".to_string()),
+                        country_code.as_ref()
+                            .map(|x| ",".to_string() + x)
+                            .unwrap_or(String::from("")))
             }
             Location::CityId { id } => {
                 format!("id={}", id)

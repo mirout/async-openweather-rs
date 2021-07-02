@@ -47,7 +47,7 @@ mod tests {
     async fn test_current_weather_by_zipcode() {
         let client = OpenWeatherClient::new(&env::var("OWT").unwrap());
         let city = Location::ZipCode {
-            zip_code: "10001".to_string(),
+            zip_code: 10001,
             country_code: "US".to_string(),
         };
         let result = client.get_current_weather(city).await;
