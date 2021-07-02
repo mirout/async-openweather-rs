@@ -29,4 +29,15 @@ mod tests {
         let result = client.get_current_weather(city).await;
         assert_eq!(result.unwrap().name, "Saint Petersburg")
     }
+
+    #[tokio::test]
+    async fn test_current_weather_by_coordinates() {
+        let client = OpenWeatherClient::new(&env::var("OWT").unwrap());
+        let city = Location::Coordinates {
+            lat: 55.751244,
+            lon: 37.618423,
+        };
+        let result = client.get_current_weather(city).await;
+        assert_eq!(result.unwrap().name, "Moscow")
+    }
 }
