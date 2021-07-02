@@ -40,4 +40,15 @@ mod tests {
         let result = client.get_current_weather(city).await;
         assert_eq!(result.unwrap().name, "Moscow")
     }
+
+    #[tokio::test]
+    async fn test_current_weather_by_zipcode() {
+        let client = OpenWeatherClient::new(&env::var("OWT").unwrap());
+        let city = Location::ZipCode {
+            zip_code: "10001".to_string(),
+            country_code: "US".to_string(),
+        };
+        let result = client.get_current_weather(city).await;
+        assert_eq!(result.unwrap().name, "New York")
+    }
 }
