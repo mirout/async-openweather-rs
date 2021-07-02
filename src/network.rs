@@ -14,21 +14,16 @@ pub struct OpenWeatherClient {
 }
 
 impl OpenWeatherClient {
+    pub fn builder(token: &str) -> OpenWeatherClientBuilder {
+        OpenWeatherClientBuilder::new(token)
+    }
+
     pub fn new(token: &str) -> OpenWeatherClient {
         OpenWeatherClient {
             token: token.to_string(),
             lang: Lang::default(),
             units: Unit::default(),
             client: reqwest::Client::new(),
-        }
-    }
-
-    pub fn new_with_custom_client(token: &str, client: reqwest::Client) -> OpenWeatherClient {
-        OpenWeatherClient {
-            token: token.to_string(),
-            lang: Lang::default(),
-            units: Unit::default(),
-            client,
         }
     }
 
@@ -43,5 +38,48 @@ impl OpenWeatherClient {
         let result = self.client.get(url).send().await?;
         let json = result.json().await?;
         Ok(json)
+    }
+}
+
+pub struct OpenWeatherClientBuilder {
+    token: String,
+    lang: Lang,
+    units: Unit,
+    client: reqwest::Client,
+}
+
+impl OpenWeatherClientBuilder {
+
+    fn new(token: &str) -> OpenWeatherClientBuilder {
+        OpenWeatherClientBuilder {
+            token: token.to_string(),
+            lang: Lang::default(),
+            units: Unit::default(),
+            client: reqwest::Client::new(),
+        }
+    }
+
+    fn lang(mut self, lang: Lang) -> Self {
+        self.lang = lang;
+        self
+    }
+
+    fn unit(mut self, unit: Unit) -> Self {
+        self.units = unit;
+        self
+    }
+
+    fn client(mut self, client: reqwest::Client) -> Self {
+        self.client = client;
+        self
+    }
+
+    fn build(self) -> OpenWeatherClient {
+        OpenWeatherClient {
+            token: self.token,
+            lang: self.lang,
+            units: self.units,
+            client: self.client,
+        }
     }
 }
