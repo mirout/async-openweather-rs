@@ -41,7 +41,9 @@ impl Location {
             Location::CityId { id } => {
                 format!("id={}", id)
             }
-            Location::Coordinates { .. } => {unimplemented!()}
+            Location::Coordinates { lat, lon } => {
+                format!("lat={}&lon={}", lat, lon)
+            }
             Location::ZipCode { .. } => {unimplemented!()}
             Location::BoundingBox { .. } => {unimplemented!()}
             Location::Circle { .. } => {unimplemented!()}
