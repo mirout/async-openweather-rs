@@ -1,4 +1,4 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Coordinates {
@@ -37,7 +37,7 @@ pub struct Clouds {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Sys {
-    #[serde(rename="type")]
+    #[serde(rename = "type")]
     pub sys_type: u32,
     pub id: u32,
     pub country: String,

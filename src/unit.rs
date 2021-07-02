@@ -13,9 +13,9 @@ impl Default for Unit {
 impl ToString for Unit {
     fn to_string(&self) -> String {
         match self {
-            Unit::Standard => { "standard".to_string() }
-            Unit::Metric => { "metric".to_string() }
-            Unit::Imperial => { "imperial".to_string() }
+            Unit::Standard => "standard".to_string(),
+            Unit::Metric => "metric".to_string(),
+            Unit::Imperial => "imperial".to_string(),
         }
     }
 }

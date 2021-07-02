@@ -30,29 +30,39 @@ pub enum Location {
 }
 
 impl Location {
-    pub fn get_parameter(&self) -> String {
+    pub fn format(&self) -> Vec<(&str, String)> {
         match self {
-            Location::CityName { name, state_code, country_code } => {
-                format!("q={}{}{}",
-                        name,
-                        state_code.as_ref()
-                            .map(|x| ",".to_string() + x)
-                            .unwrap_or("".to_string()),
-                        country_code.as_ref()
-                            .map(|x| ",".to_string() + x)
-                            .unwrap_or(String::from("")))
+            Location::CityName {
+                name,
+                state_code,
+                country_code,
+            } => {
+                let val = format!(
+                    "{},{},{}",
+                    name,
+                    state_code.as_ref().unwrap_or(&"".to_string()),
+                    country_code.as_ref().unwrap_or(&"".to_string())
+                );
+                vec![("q", val)]
             }
             Location::CityId { id } => {
-                format!("id={}", id)
+                vec![("id", id.clone())]
             }
             Location::Coordinates { lat, lon } => {
-                format!("lat={}&lon={}", lat, lon)
+                vec![("lat", lat.to_string()), ("lon", lon.to_string())]
             }
-            Location::ZipCode { zip_code, country_code } => {
-                format!("zip={},{}", zip_code, country_code)
+            Location::ZipCode {
+                zip_code,
+                country_code,
+            } => {
+                vec![("zip", format!("{},{}", zip_code, country_code))]
             }
-            Location::BoundingBox { .. } => {unimplemented!()}
-            Location::Circle { .. } => {unimplemented!()}
+            Location::BoundingBox { .. } => {
+                unimplemented!()
+            }
+            Location::Circle { .. } => {
+                unimplemented!()
+            }
         }
     }
 }

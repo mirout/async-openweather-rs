@@ -1,8 +1,8 @@
+use crate::language::Lang;
 use crate::location;
+use crate::unit::Unit;
 use crate::weather::WeatherCurrent;
 use std::error::Error;
-use crate::language::Lang;
-use crate::unit::Unit;
 
 const PREFIX: &str = "https://api.openweathermap.org/data/2.5/";
 
@@ -27,15 +27,22 @@ impl OpenWeatherClient {
         }
     }
 
-    pub async fn get_current_weather(&self, location: location::Location) -> Result<WeatherCurrent, Box<dyn Error>> {
-        let url = format!("{}weather?{}&lang={}&units={}&appid={}",
-                          PREFIX,
-                          location.get_parameter(),
-                          self.lang.to_string(),
-                          self.units.to_string(),
-                          self.token);
-
-        let result = self.client.get(url).send().await?;
+    pub async fn get_current_weather(
+        &self,
+        location: location::Location,
+    ) -> Result<WeatherCurrent, Box<dyn Error>> {
+        let url = format!("{}weather", PREFIX);
+        let result = self
+            .client
+            .get(url)
+            .query(&location.format())
+            .query(&[
+                ("lang", self.lang.to_string()),
+                ("units", self.units.to_string()),
+                ("appid", self.token.clone()),
+            ])
+            .send()
+            .await?;
         let json = result.json().await?;
         Ok(json)
     }
@@ -49,7 +56,6 @@ pub struct OpenWeatherClientBuilder {
 }
 
 impl OpenWeatherClientBuilder {
-
     pub fn new(token: &str) -> OpenWeatherClientBuilder {
         OpenWeatherClientBuilder {
             token: token.to_string(),
