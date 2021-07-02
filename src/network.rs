@@ -50,7 +50,7 @@ pub struct OpenWeatherClientBuilder {
 
 impl OpenWeatherClientBuilder {
 
-    fn new(token: &str) -> OpenWeatherClientBuilder {
+    pub fn new(token: &str) -> OpenWeatherClientBuilder {
         OpenWeatherClientBuilder {
             token: token.to_string(),
             lang: Lang::default(),
@@ -59,22 +59,22 @@ impl OpenWeatherClientBuilder {
         }
     }
 
-    fn lang(mut self, lang: Lang) -> Self {
+    pub fn lang(mut self, lang: Lang) -> Self {
         self.lang = lang;
         self
     }
 
-    fn unit(mut self, unit: Unit) -> Self {
+    pub fn unit(mut self, unit: Unit) -> Self {
         self.units = unit;
         self
     }
 
-    fn client(mut self, client: reqwest::Client) -> Self {
+    pub fn client(mut self, client: reqwest::Client) -> Self {
         self.client = client;
         self
     }
 
-    fn build(self) -> OpenWeatherClient {
+    pub fn build(self) -> OpenWeatherClient {
         OpenWeatherClient {
             token: self.token,
             lang: self.lang,
