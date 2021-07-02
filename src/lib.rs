@@ -19,4 +19,14 @@ mod tests {
         let result = client.get_current_weather(city).await;
         assert_eq!(result.unwrap().name, "London")
     }
+
+    #[tokio::test]
+    async fn test_current_weather_by_city_id() {
+        let client = OpenWeatherClient::new(&env::var("OWT").unwrap());
+        let city = Location::CityId {
+            id: "498817".to_string()
+        };
+        let result = client.get_current_weather(city).await;
+        assert_eq!(result.unwrap().name, "Saint Petersburg")
+    }
 }
