@@ -30,5 +30,19 @@ pub enum Location {
 }
 
 impl Location {
-
+    pub fn get_parameter(&self) -> String {
+        match self {
+            Location::CityName { name, state_code, country_code } => {
+                format!("q={}{}{}",
+                        name,
+                        state_code.as_ref().map(|x| ",".to_string() + x).unwrap_or("".to_string()),
+                        country_code.as_ref().map(|x| ",".to_string() + x).unwrap_or(String::from("")))
+            }
+            Location::CityId { .. } => {unimplemented!()}
+            Location::Coordinates { .. } => {unimplemented!()}
+            Location::ZipCode { .. } => {unimplemented!()}
+            Location::BoundingBox { .. } => {unimplemented!()}
+            Location::Circle { .. } => {unimplemented!()}
+        }
+    }
 }
