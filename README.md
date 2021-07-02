@@ -1,3 +1,3 @@
 # async-openweather-rs 
 
-** async-openweather-rs is *unofficial* client for get access to OpenWeatherMap API**
+async-openweather-rs is *unofficial* wrapper on the OpenWeatherMap API
