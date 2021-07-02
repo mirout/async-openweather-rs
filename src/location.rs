@@ -44,7 +44,9 @@ impl Location {
             Location::Coordinates { lat, lon } => {
                 format!("lat={}&lon={}", lat, lon)
             }
-            Location::ZipCode { .. } => {unimplemented!()}
+            Location::ZipCode { zip_code, country_code } => {
+                format!("zip={},{}", zip_code, country_code)
+            }
             Location::BoundingBox { .. } => {unimplemented!()}
             Location::Circle { .. } => {unimplemented!()}
         }
