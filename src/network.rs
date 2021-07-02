@@ -1,5 +1,7 @@
 use crate::location;
-use crate::weather::WeatherCurrent;
+use crate::weather::{WeatherCurrent, Weather};
+
+const PREFIX: &str = "https://api.openweathermap.org/data/2.5/";
 
 pub struct OpenWeatherClient {
     pub token: String,
@@ -28,6 +30,9 @@ impl OpenWeatherClient {
     }
 
     pub async fn get_current_weather(&self, location: location::Location) -> Option<WeatherCurrent> {
-        unimplemented!()
+        let url = format!("{}weather?{}&appid={}", PREFIX, location.get_parameter(), self.token);
+        let result = self.client.get(url).send().await.ok()?;
+        let json = result.json().await.ok()?;
+        Some(json)
     }
 }
