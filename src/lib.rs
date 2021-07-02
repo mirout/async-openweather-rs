@@ -1,6 +1,7 @@
 pub mod location;
 pub mod network;
 pub mod weather;
+pub mod language;
 
 #[cfg(test)]
 mod tests {
