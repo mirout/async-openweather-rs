@@ -1,5 +1,6 @@
 use crate::location;
-use crate::weather::{WeatherCurrent, Weather};
+use crate::weather::WeatherCurrent;
+use std::error::Error;
 
 const PREFIX: &str = "https://api.openweathermap.org/data/2.5/";
 
@@ -29,10 +30,10 @@ impl OpenWeatherClient {
         }
     }
 
-    pub async fn get_current_weather(&self, location: location::Location) -> Option<WeatherCurrent> {
+    pub async fn get_current_weather(&self, location: location::Location) -> Result<WeatherCurrent, Box<dyn Error>> {
         let url = format!("{}weather?{}&appid={}", PREFIX, location.get_parameter(), self.token);
-        let result = self.client.get(url).send().await.ok()?;
-        let json = result.json().await.ok()?;
-        Some(json)
+        let result = self.client.get(url).send().await?;
+        let json = result.json().await?;
+        Ok(json)
     }
 }
