@@ -22,12 +22,15 @@ pub struct Main {
     pub temp_max: f32,
     pub pressure: f32,
     pub humidity: f32,
+    pub sea_level: Option<f32>,
+    pub grnd_level: Option<f32>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Wind {
     pub speed: f32,
     pub deg: f32,
+    pub gust: Option<f32>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -46,6 +49,14 @@ pub struct Sys {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+pub struct Precipitation {
+    #[serde(rename = "1h")]
+    one_h: Option<f32>,
+    #[serde(rename = "3h")]
+    three_h: Option<f32>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
 pub struct WeatherCurrent {
     pub coord: Coordinates,
     pub weather: Vec<Weather>,
@@ -56,6 +67,8 @@ pub struct WeatherCurrent {
     pub clouds: Clouds,
     pub dt: u64,
     pub sys: Sys,
+    pub rain: Option<Precipitation>,
+    pub snow: Option<Precipitation>,
     pub timezone: i32,
     pub id: u64,
     pub name: String,
