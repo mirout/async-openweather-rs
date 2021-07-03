@@ -12,7 +12,8 @@ mod tests {
 
     #[tokio::test]
     async fn test_current_weather_by_city() {
-        let client = OpenWeatherClient::new(&env::var("OWT").unwrap());
+        let token = env::var("OWT").unwrap();
+        let client = OpenWeatherClient::new(token);
         let city = Location::CityName {
             name: "London".to_string(),
             state_code: None,
@@ -24,7 +25,8 @@ mod tests {
 
     #[tokio::test]
     async fn test_current_weather_by_city_id() {
-        let client = OpenWeatherClient::new(&env::var("OWT").unwrap());
+        let token = env::var("OWT").unwrap();
+        let client = OpenWeatherClient::new(token);
         let city = Location::CityId {
             id: "498817".to_string(),
         };
@@ -34,7 +36,8 @@ mod tests {
 
     #[tokio::test]
     async fn test_current_weather_by_coordinates() {
-        let client = OpenWeatherClient::new(&env::var("OWT").unwrap());
+        let token = env::var("OWT").unwrap();
+        let client = OpenWeatherClient::new(token);
         let city = Location::Coordinates {
             lat: 55.751244,
             lon: 37.618423,
@@ -45,7 +48,8 @@ mod tests {
 
     #[tokio::test]
     async fn test_current_weather_by_zipcode() {
-        let client = OpenWeatherClient::new(&env::var("OWT").unwrap());
+        let token = env::var("OWT").unwrap();
+        let client = OpenWeatherClient::new(token);
         let city = Location::ZipCode {
             zip_code: 10001,
             country_code: "US".to_string(),

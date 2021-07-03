@@ -14,13 +14,13 @@ pub struct OpenWeatherClient {
 }
 
 impl OpenWeatherClient {
-    pub fn builder(token: &str) -> OpenWeatherClientBuilder {
+    pub fn builder(token: String) -> OpenWeatherClientBuilder {
         OpenWeatherClientBuilder::new(token)
     }
 
-    pub fn new(token: &str) -> OpenWeatherClient {
+    pub fn new(token: String) -> OpenWeatherClient {
         OpenWeatherClient {
-            token: token.to_string(),
+            token,
             lang: Lang::default(),
             units: Unit::default(),
             client: reqwest::Client::new(),
@@ -56,9 +56,9 @@ pub struct OpenWeatherClientBuilder {
 }
 
 impl OpenWeatherClientBuilder {
-    pub fn new(token: &str) -> OpenWeatherClientBuilder {
+    pub fn new(token: String) -> OpenWeatherClientBuilder {
         OpenWeatherClientBuilder {
-            token: token.to_string(),
+            token,
             lang: Lang::default(),
             units: Unit::default(),
             client: reqwest::Client::new(),
