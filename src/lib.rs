@@ -7,7 +7,7 @@ pub mod weather;
 #[cfg(test)]
 mod tests {
     use crate::location::UnitLocation;
-    use crate::network::OpenWeatherClient;
+    use crate::network::{CurrentWeather, OpenWeatherClient};
     use std::env;
 
     #[tokio::test]

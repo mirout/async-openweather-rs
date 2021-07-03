@@ -1,8 +1,9 @@
 use crate::language::Lang;
 use crate::location;
-use crate::location::LocationFormat;
+use crate::location::{LocationFormat, UnitLocation};
 use crate::unit::Unit;
 use crate::weather::WeatherCurrent;
+use async_trait::async_trait;
 use std::error::Error;
 
 const PREFIX: &str = "https://api.openweathermap.org/data/2.5/";
@@ -26,26 +27,6 @@ impl OpenWeatherClient {
             units: Unit::default(),
             client: reqwest::Client::new(),
         }
-    }
-
-    pub async fn get_current_weather(
-        &self,
-        location: location::UnitLocation,
-    ) -> Result<WeatherCurrent, Box<dyn Error>> {
-        let url = format!("{}weather", PREFIX);
-        let result = self
-            .client
-            .get(url)
-            .query(&location.format())
-            .query(&[
-                ("lang", self.lang.to_string()),
-                ("units", self.units.to_string()),
-                ("appid", self.token.clone()),
-            ])
-            .send()
-            .await?;
-        let json = result.json().await?;
-        Ok(json)
     }
 }
 
@@ -88,5 +69,36 @@ impl OpenWeatherClientBuilder {
             units: self.units,
             client: self.client,
         }
+    }
+}
+
+#[async_trait]
+pub trait CurrentWeather<T> {
+    type CurWeather;
+    async fn get_current_weather(&self, location: T) -> Result<Self::CurWeather, Box<dyn Error>>;
+}
+
+#[async_trait]
+impl CurrentWeather<location::UnitLocation> for OpenWeatherClient {
+    type CurWeather = WeatherCurrent;
+
+    async fn get_current_weather(
+        &self,
+        location: UnitLocation,
+    ) -> Result<Self::CurWeather, Box<dyn Error>> {
+        let url = format!("{}weather", PREFIX);
+        let result = self
+            .client
+            .get(url)
+            .query(&location.format())
+            .query(&[
+                ("lang", self.lang.to_string()),
+                ("units", self.units.to_string()),
+                ("appid", self.token.clone()),
+            ])
+            .send()
+            .await?;
+        let json = result.json().await?;
+        Ok(json)
     }
 }
