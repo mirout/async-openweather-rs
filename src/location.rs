@@ -70,6 +70,29 @@ pub enum MultiLocation {
 
 impl LocationFormat for MultiLocation {
     fn format(&self) -> Vec<(&str, String)> {
-        unimplemented!()
+        match self {
+            MultiLocation::BoundingBox {
+                lon_left,
+                lon_right,
+                lat_top,
+                lat_bottom,
+                zoom,
+            } => {
+                vec![(
+                    "bbox",
+                    format!(
+                        "{},{},{},{},{}",
+                        lon_left, lat_top, lon_right, lat_bottom, zoom
+                    ),
+                )]
+            }
+            MultiLocation::Circle { lon, lat, count } => {
+                vec![
+                    ("lon", lon.to_string()),
+                    ("lat", lat.to_string()),
+                    ("cnt", count.to_string()),
+                ]
+            }
+        }
     }
 }
