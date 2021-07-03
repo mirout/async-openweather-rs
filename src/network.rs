@@ -1,5 +1,6 @@
 use crate::language::Lang;
 use crate::location;
+use crate::location::LocationFormat;
 use crate::unit::Unit;
 use crate::weather::WeatherCurrent;
 use std::error::Error;
@@ -29,7 +30,7 @@ impl OpenWeatherClient {
 
     pub async fn get_current_weather(
         &self,
-        location: location::Location,
+        location: location::UnitLocation,
     ) -> Result<WeatherCurrent, Box<dyn Error>> {
         let url = format!("{}weather", PREFIX);
         let result = self
