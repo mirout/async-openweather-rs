@@ -1,8 +1,8 @@
 use crate::language::Lang;
 use crate::location;
-use crate::location::{LocationFormat, UnitLocation};
+use crate::location::{LocationFormat, MultiLocation, UnitLocation};
 use crate::unit::Unit;
-use crate::weather::WeatherCurrent;
+use crate::weather::{MultiCurrentWeather, WeatherCurrent};
 use async_trait::async_trait;
 use std::error::Error;
 
@@ -79,7 +79,7 @@ pub trait CurrentWeather<T> {
 }
 
 #[async_trait]
-impl CurrentWeather<location::UnitLocation> for OpenWeatherClient {
+impl CurrentWeather<UnitLocation> for OpenWeatherClient {
     type CurWeather = WeatherCurrent;
 
     async fn get_current_weather(
@@ -87,6 +87,49 @@ impl CurrentWeather<location::UnitLocation> for OpenWeatherClient {
         location: UnitLocation,
     ) -> Result<Self::CurWeather, Box<dyn Error>> {
         let url = format!("{}weather", PREFIX);
+        let result = self
+            .client
+            .get(url)
+            .query(&location.format())
+            .query(&[
+                ("lang", self.lang.to_string()),
+                ("units", self.units.to_string()),
+                ("appid", self.token.clone()),
+            ])
+            .send()
+            .await?;
+        let json = result.json().await?;
+        Ok(json)
+    }
+}
+
+#[async_trait()]
+impl CurrentWeather<MultiLocation> for OpenWeatherClient {
+    type CurWeather = MultiCurrentWeather;
+
+    async fn get_current_weather(
+        &self,
+        location: MultiLocation,
+    ) -> Result<Self::CurWeather, Box<dyn Error>> {
+        let url = match location {
+            MultiLocation::BoundingBox { .. } => {
+                format!("{}box/city", PREFIX)
+            }
+            MultiLocation::Circle { .. } => {
+                format!("{}find", PREFIX)
+            }
+        };
+        println!(
+            "{:?}",
+            self.client
+                .get(url.clone())
+                .query(&location.format())
+                .query(&[
+                    ("lang", self.lang.to_string()),
+                    ("units", self.units.to_string()),
+                    ("appid", self.token.clone()),
+                ])
+        );
         let result = self
             .client
             .get(url)

@@ -1,8 +1,13 @@
-use serde::{Deserialize, Serialize};
+use serde::{de, Deserialize, Deserializer, Serialize};
+use serde_json::Value;
+use std::fmt::Display;
+use std::str::FromStr;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Coordinates {
+    #[serde(alias = "Lon")]
     pub lon: f32,
+    #[serde(alias = "Lat")]
     pub lat: f32,
 }
 
@@ -35,17 +40,18 @@ pub struct Wind {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Clouds {
-    pub all: f32,
+    pub all: Option<f32>,
+    pub today: Option<u32>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Sys {
     #[serde(rename = "type")]
-    pub sys_type: u32,
-    pub id: u32,
+    pub sys_type: Option<u32>,
+    pub id: Option<u32>,
     pub country: String,
-    pub sunrise: u64,
-    pub sunset: u64,
+    pub sunrise: Option<u64>,
+    pub sunset: Option<u64>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -60,26 +66,39 @@ pub struct Precipitation {
 pub struct WeatherCurrent {
     pub coord: Coordinates,
     pub weather: Vec<Weather>,
-    pub base: String,
+    pub base: Option<String>,
     pub main: Main,
-    pub visibility: u32,
+    pub visibility: Option<u32>,
     pub wind: Wind,
     pub clouds: Clouds,
     pub dt: u64,
-    pub sys: Sys,
+    pub sys: Option<Sys>,
     pub rain: Option<Precipitation>,
     pub snow: Option<Precipitation>,
-    pub timezone: i32,
+    pub timezone: Option<i32>,
     pub id: u64,
     pub name: String,
-    pub cod: u32,
+    pub cod: Option<u32>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct MultiCurrentWeather {
-    pub message: String,
+    pub message: Option<String>,
+    #[serde(deserialize_with = "from_u32_or_str")]
     pub cod: u32,
+    pub calctime: Option<f32>,
+    #[serde(alias = "cnt", alias = "count")]
     pub count: u32,
-    pub list: Vec<WeatherCurrent>
+    pub list: Vec<WeatherCurrent>,
 }
-// {"coord":{"lon":-0.1257,"lat":51.5085},"weather":[{"id":803,"main":"Clouds","description":"broken clouds","icon":"04d"}],"base":"stations","main":{"temp":291.77,"feels_like":291.75,"temp_min":288.76,"temp_max":294.11,"pressure":1018,"humidity":79},"visibility":9000,"wind":{"speed":2.57,"deg":260},"clouds":{"all":75},"dt":1625218116,"sys":{"type":2,"id":268730,"country":"GB","sunrise":1625197696,"sunset":1625257232},"timezone":3600,"id":2643743,"name":"London","cod":200}
+
+fn from_u32_or_str<'de, D>(deserializer: D) -> Result<u32, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    Ok(match Value::deserialize(deserializer)? {
+        Value::Number(num) => num.as_u64().unwrap() as u32,
+        Value::String(s) => s.parse().unwrap(),
+        _ => return Err(de::Error::custom("wrong type")),
+    })
+}
