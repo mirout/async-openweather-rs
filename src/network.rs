@@ -3,6 +3,7 @@ use crate::location::{LocationFormat, MultiLocation, UnitLocation};
 use crate::unit::Unit;
 use crate::weather::{MultiCurrentWeather, WeatherCurrent};
 use async_trait::async_trait;
+use serde::de::DeserializeOwned;
 use std::error::Error;
 
 const PREFIX: &str = "https://api.openweathermap.org/data/2.5/";
@@ -26,6 +27,16 @@ impl OpenWeatherClient {
             units: Unit::default(),
             client: reqwest::Client::new(),
         }
+    }
+
+    pub fn params<'a>(&self, mut location: Vec<(&'a str, String)>) -> Vec<(&'a str, String)> {
+        let mut client = vec![
+            ("lang", self.lang.to_string()),
+            ("units", self.units.to_string()),
+            ("appid", self.token.clone()),
+        ];
+        location.append(&mut client);
+        location
     }
 }
 
@@ -72,9 +83,31 @@ impl OpenWeatherClientBuilder {
 }
 
 #[async_trait]
-pub trait CurrentWeather<T> {
+pub trait Request {
+    async fn get<T: DeserializeOwned>(
+        &self,
+        url: String,
+        params: Vec<(&str, String)>,
+    ) -> Result<T, Box<dyn Error>>;
+}
+
+#[async_trait]
+pub trait CurrentWeather<T>: Request {
     type CurWeather;
     async fn get_current_weather(&self, location: T) -> Result<Self::CurWeather, Box<dyn Error>>;
+}
+
+#[async_trait]
+impl Request for OpenWeatherClient {
+    async fn get<T: DeserializeOwned>(
+        &self,
+        url: String,
+        params: Vec<(&str, String)>,
+    ) -> Result<T, Box<dyn Error>> {
+        let response = self.client.get(url).query(&params).send().await?;
+        let json = response.json().await?;
+        Ok(json)
+    }
 }
 
 #[async_trait]
@@ -86,19 +119,8 @@ impl CurrentWeather<UnitLocation> for OpenWeatherClient {
         location: UnitLocation,
     ) -> Result<Self::CurWeather, Box<dyn Error>> {
         let url = format!("{}weather", PREFIX);
-        let result = self
-            .client
-            .get(url)
-            .query(&location.format())
-            .query(&[
-                ("lang", self.lang.to_string()),
-                ("units", self.units.to_string()),
-                ("appid", self.token.clone()),
-            ])
-            .send()
-            .await?;
-        let json = result.json().await?;
-        Ok(json)
+        let params = self.params(location.format());
+        self.get(url, params).await
     }
 }
 
@@ -118,18 +140,7 @@ impl CurrentWeather<MultiLocation> for OpenWeatherClient {
                 format!("{}find", PREFIX)
             }
         };
-        let result = self
-            .client
-            .get(url)
-            .query(&location.format())
-            .query(&[
-                ("lang", self.lang.to_string()),
-                ("units", self.units.to_string()),
-                ("appid", self.token.clone()),
-            ])
-            .send()
-            .await?;
-        let json = result.json().await?;
-        Ok(json)
+        let params = self.params(location.format());
+        self.get(url, params).await
     }
 }
