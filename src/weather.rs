@@ -1,7 +1,5 @@
 use serde::{de, Deserialize, Deserializer, Serialize};
 use serde_json::Value;
-use std::fmt::Display;
-use std::str::FromStr;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Coordinates {

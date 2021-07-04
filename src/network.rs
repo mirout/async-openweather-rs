@@ -1,5 +1,4 @@
 use crate::language::Lang;
-use crate::location;
 use crate::location::{LocationFormat, MultiLocation, UnitLocation};
 use crate::unit::Unit;
 use crate::weather::{MultiCurrentWeather, WeatherCurrent};
@@ -119,17 +118,6 @@ impl CurrentWeather<MultiLocation> for OpenWeatherClient {
                 format!("{}find", PREFIX)
             }
         };
-        println!(
-            "{:?}",
-            self.client
-                .get(url.clone())
-                .query(&location.format())
-                .query(&[
-                    ("lang", self.lang.to_string()),
-                    ("units", self.units.to_string()),
-                    ("appid", self.token.clone()),
-                ])
-        );
         let result = self
             .client
             .get(url)
